@@ -34,7 +34,12 @@ def setup():
         with open(path, "r") as f:
             input = f.read()
     except FileNotFoundError:
-        logger.error(f"Input file for {__name__} not found!")
+        logger.error(f"Input file for {__file__} not found!")
         return False
 
     return True
+
+if __name__ == "__main__":
+    if setup():
+        task1()
+        task2()
