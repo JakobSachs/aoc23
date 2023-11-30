@@ -4,8 +4,9 @@
 import time
 import os
 import importlib.util
+from typing import Tuple, Union
 
-def run_task(module, task_name):
+def run_task(module, task_name) -> Union[bool,float]:
     # Start timing
     start_time = time.time()
 
@@ -14,14 +15,14 @@ def run_task(module, task_name):
         getattr(module, task_name)()
     else:
         print(f"Task {task_name} not present for: {module.__name__}")
-        return -1
+        return False
 
     # End timing
     end_time = time.time()
 
     return end_time - start_time
 
-def run_challenge(file_path):
+def run_challenge(file_path) -> Union[bool,Tuple[float,float]]:
     module_name = os.path.basename(file_path).split('.')[0]
     spec = importlib.util.spec_from_file_location(module_name, file_path)
     module = importlib.util.module_from_spec(spec)
@@ -29,13 +30,21 @@ def run_challenge(file_path):
 
     # Run setup function if it exists
     if hasattr(module, 'setup'):
-        module.setup()
+        if not module.setup():
+            print(f"Setup failed for: {module.__name__}")
+            return False
 
     # Run tasks and record times
-    task1_time = run_task(module, 'task1')
-    task2_time = run_task(module, 'task2')
+    task1_result = run_task(module, 'task1')
+    if not task1_result:
+        return False
 
-    return task1_time, task2_time
+    task2_result = run_task(module, 'task2')
+    if not task2_result:
+        return False
+
+
+    return task1_result, task2_result
 
 def main():
     solutions_dir = './solutions'
@@ -44,10 +53,14 @@ def main():
     challenge_results = {}
     for file in challenge_files:
         file_path = os.path.join(solutions_dir, file)
-        task1_time, task2_time = run_challenge(file_path)
+        res = run_challenge(file_path)
+        if not res:
+            continue
+        res = tuple(res)
+
         challenge_results[file] = {
-            "task1_time": task1_time,
-            "task2_time": task2_time
+            "task1_time": res[0],
+            "task2_time": res[1]
         }
 
 
