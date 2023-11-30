@@ -26,7 +26,6 @@ def format_results_to_markdown_table(challenge_results) -> str:
         )
         markdown_table += "\n"
 
-    markdown_table += "| --- | ------ | ------ |\n"
     return markdown_table
 
 
