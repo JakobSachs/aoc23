@@ -29,15 +29,17 @@ def setup():
 
     # read input
     global input
-    path = os.path.join(os.path.dirname(__file__), f"../inputs/{__name__}.txt")
+    day = os.path.basename(__file__).split(".")[0]
+    path = os.path.join(os.path.dirname(__file__), f"../inputs/{day}.txt")
     try:
         with open(path, "r") as f:
             input = f.read()
     except FileNotFoundError:
-        logger.error(f"Input file for {__file__} not found!")
+        logger.error(f"Input file for {day} not found! [{path}]")
         return False
 
     return True
+
 
 if __name__ == "__main__":
     if setup():
