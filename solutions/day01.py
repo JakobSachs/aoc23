@@ -4,25 +4,20 @@
 # ------------------------------------------------ #
 
 
-import enum
-
-
 def task1() -> bool:
-    values = input.split("\n")
-    sum = 0
-    for v in values:
-        if len(v) == 0:
-            continue
-        digits = list(filter(lambda c: c.isdigit(), v))
-        sum += int(digits[0]) * 10
-        sum += int(digits[-1])
+    values_str = input.split("\n")[:-1]
 
-    logger.info(f"SOLUTION1: {sum}")
+    # While being more elegant, this is also slower
+    # values = [ list(filter(lambda c: c.isdigit(), v)) for v in values_str ]
+    values = [[int(char) for char in v if char.isdigit()] for v in values_str]
+    v_sum = sum([v[0] * 10 + v[-1] for v in values])
+
+    logger.info(f"SOLUTION1: {v_sum}")
     return True
 
 
 def task2() -> bool:
-    literaL_digits = [
+    literal_digits = [
         "one",
         "two",
         "three",
@@ -34,21 +29,18 @@ def task2() -> bool:
         "nine",
     ]
 
-    values = input.split("\n")
+    values = input.split("\n")[:-1]
     sum = 0
     for v in values:
-        if len(v) == 0:
-            continue
         digits = []
         for i, c in enumerate(v):
-            if c.isdigit():
+            if c.isdigit():  # same as before basiaclly
                 digits.append(int(c))
                 continue
-
-            for d, ld in enumerate(literaL_digits):
-                res = v.find(ld, i)
-                if res == i:
+            for d, ld in enumerate(literal_digits):
+                if v.startswith(ld, i):
                     digits.append(d + 1)
+                    break
 
         sum += digits[0] * 10
         sum += digits[-1]
@@ -64,7 +56,7 @@ def task2() -> bool:
 import coloredlogs, logging, os
 
 logger = logging.getLogger(__name__)
-input = None
+input = ""
 
 
 def setup():
