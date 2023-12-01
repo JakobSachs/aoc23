@@ -48,10 +48,8 @@ def task2() -> bool:
             for d, ld in enumerate(literaL_digits):
                 res = v.find(ld, i)
                 if res == i:
-                    print(f"appending {d+1}")
                     digits.append(d + 1)
 
-        print(digits)
         sum += digits[0] * 10
         sum += digits[-1]
 

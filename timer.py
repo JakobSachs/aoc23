@@ -7,22 +7,31 @@ import importlib.util
 from typing import Tuple, Union
 
 
+def humanize_time(seconds: float) -> str:
+    if seconds < 1e-6:
+        return f"{seconds*1e9: 6.2f} ns"
+    elif seconds < 1e-3:
+        return f"{seconds*1e6: 6.2f} µs"
+
+    return f"{seconds*1e3: 6.2f} ms"
+
+
 def format_results_to_markdown_table(challenge_results) -> str:
     markdown_table = "## Challenges\n\nTable:\n\n"
-    markdown_table += "| Day | Task 1 | Task 2 |\n"
-    markdown_table += "| --- | ------ | ------ |\n"
+    markdown_table += "| Day |   Task 1  |   Task 2  |\n"
+    markdown_table += "| --- | --------- | --------- |\n"
 
     for day, times in sorted(challenge_results.items()):
         markdown_table += f"|  {day} | "
         markdown_table += (
-            f"{times['task1_time']:.2f} | "
-            if times["task1_time"] != None
-            else "   ❌  | "
+            f"{humanize_time(times['task1_time'])} | "
+            if times["task1_time"] is not None
+            else "    ❌    | "
         )
         markdown_table += (
-            f"{times['task2_time']:.2f} | "
-            if times["task2_time"] != None
-            else "   ❌  | "
+            f"{humanize_time(times['task2_time'])} | "
+            if times["task2_time"] is not None
+            else "    ❌    | "
         )
         markdown_table += "\n"
 
@@ -30,24 +39,33 @@ def format_results_to_markdown_table(challenge_results) -> str:
 
 
 def run_task(module, task_name) -> Union[bool, float]:
-    # Start timing
-    start_time = time.time()
-    res = False
-    # Execute the task
-    if hasattr(module, task_name):
-        res = getattr(module, task_name)()
-    else:
+    total_time = 0
+
+    # Check if the task exists in the module
+    if not hasattr(module, task_name):
         print(f"Task {task_name} not present for: {module.__name__}")
         return False
 
-    if not res:
-        print(f"Task {task_name} failed for: {module.__name__}")
+    t_res = getattr(module, task_name)()
+    if not t_res:
         return False
 
-    # End timing
-    end_time = time.time()
+    for _ in range(3):
+        # Start timing
+        start_time = time.time()
 
-    return end_time - start_time
+        # Execute the task
+        getattr(module, task_name)()
+
+        # End timing
+        end_time = time.time()
+
+        # Accumulate total time
+        total_time += end_time - start_time
+
+    # Calculate average time
+    average_time = total_time / 3
+    return average_time
 
 
 def run_challenge(file_path) -> bool | Tuple[float, float]:
@@ -96,8 +114,8 @@ def main():
     # Write results to README.md
     tbl = format_results_to_markdown_table(challenge_results)
 
-    readme_path = os.path.join(os.path.dirname(__file__), f"README.md")
-    with open(readme_path, "r+") as f:
+    readme_path = os.path.join(os.path.dirname(__file__), "README.md")
+    with open(readme_path, "r+", encoding="utf-8") as f:
         readme = f.read()
         readme = readme.split("## Challenges")[0]
         readme += tbl
