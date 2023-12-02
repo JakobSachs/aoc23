@@ -9,9 +9,9 @@ from typing import Tuple, Union
 
 def humanize_time(seconds: float) -> str:
     if seconds < 1e-6:
-        return f"{seconds*1e9: 6.2f} ns"
+        return f"{seconds*1e9: 5.2f} ns"
     elif seconds < 1e-3:
-        return f"{seconds*1e6: 6.2f} µs"
+        return f"{seconds*1e6: 5.1f} µs"
 
     return f"{seconds*1e3: 6.2f} ms"
 

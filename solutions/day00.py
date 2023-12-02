@@ -20,7 +20,7 @@ def task2() -> bool:
 import coloredlogs, logging, os
 
 logger = logging.getLogger(__name__)
-input = None
+input = ""
 
 
 def setup():
