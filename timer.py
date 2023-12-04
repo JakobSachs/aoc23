@@ -55,7 +55,12 @@ def run_task(module, task_name) -> Union[bool, float]:
         start_time = time.time()
 
         # Execute the task
-        getattr(module, task_name)()
+        try:
+            getattr(module, task_name)()
+        except Exception as e:
+            print(f"Task {task_name} failed for: {module.__name__}")
+            print(e)
+            return False
 
         # End timing
         end_time = time.time()
