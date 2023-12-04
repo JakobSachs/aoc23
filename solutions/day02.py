@@ -17,19 +17,18 @@ def parse_game(line: str) -> tuple[int, Game]:
     sets = []
     sets_str = info.split(";")
     for s in sets_str:
-        sets.append([0,0,0])
+        sets.append([0, 0, 0])
         for c in s.split(","):
             c = c.strip()
             v, k = c.split(" ")
             if k == "red":
                 sets[-1][0] = int(v)
                 continue
-            if k =="green":
+            if k == "green":
                 sets[-1][1] = int(v)
                 continue
-            
-            sets[-1][2] = int(v)
 
+            sets[-1][2] = int(v)
 
     return id, sets
 
@@ -47,10 +46,9 @@ def task1() -> bool:
         for s in g:
             if not viable:
                 break
-            for s_c,c_c in zip(s,constr):
+            for s_c, c_c in zip(s, constr):
                 if s_c > c_c:
-                    viable=False
-
+                    viable = False
 
         if viable:
             sum += id
@@ -59,22 +57,19 @@ def task1() -> bool:
     return True
 
 
-
 def task2() -> bool:
     games = input.splitlines()
     games = [parse_game(g) for g in games]
 
     sum = 0
     for _, g in games:
-        min = [ 0, 0,  0]
+        min = [0, 0, 0]
 
         for s in g:
-            for i,c in enumerate(s):
-                min[i] = max(min[i],c)
-                
+            for i, c in enumerate(s):
+                min[i] = max(min[i], c)
 
-        sum += min[0]*min[1]*min[2]
-
+        sum += min[0] * min[1] * min[2]
 
     logger.info(f"SOLUTION2: {sum}")
     return True

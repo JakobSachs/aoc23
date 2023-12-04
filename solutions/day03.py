@@ -4,6 +4,7 @@
 # ------------------------------------------------ #
 
 import re
+from typing import List, Tuple
 
 OFFSETS = [(1, 0), (1, 1), (0, 1), (-1, 1), (-1, 0), (-1, -1), (0, -1), (1, -1)]
 
@@ -51,22 +52,10 @@ def task1() -> bool:
 
 def task2() -> bool:
     lines = input.splitlines()
-    lines = [
-        "467..114..",
-        "...*......",
-        "..35..633.",
-        "......#...",
-        "617*......",
-        ".....+.58.",
-        "..592.....",
-        "......755.",
-        "...$.*....",
-        ".664.598..",
-    ]
 
     # find all numbers with their indices first
-    numbers = []
-    indices = []
+    numbers: list[list[int]] = []
+    indices: list[list[Tuple[int, int]]] = []
     # also track all the gears
     gears = []
     for l_i, l in enumerate(lines):
@@ -80,9 +69,10 @@ def task2() -> bool:
                 gears.append((l_i, i))
 
     # iterate over all gears to see if we find two neighboring numbers
+    sum = 0
     for g in gears:
         # check if theres a number somewhere adjecent
-        valid = False
+        neighbors: list[int] = []
 
         for o in OFFSETS:
             O = (g[0] + o[0], g[1] + o[1])
@@ -94,17 +84,18 @@ def task2() -> bool:
                 continue
 
             # check if theres a number around us
-            for y, (n, nr) in enumerate(numbers):
-                for x in range(nr[0], nr[1]):
-                    if (y, x) == O:
-                        valid = True
-                        break
-                if valid:
-                    break
+            for y, (nrs, idxs) in enumerate(zip(numbers, indices)):
+                for n, (x0, x1) in zip(nrs, idxs):
+                    for x in range(x0, x1):
+                        if (y, x) == O and n not in neighbors:
+                            neighbors.append(n)
 
-    # logger.info(f"SOLUTION2: {sum}")
+        if len(neighbors) == 2:
+            sum += neighbors[0] * neighbors[1]
 
-    return False
+    logger.info(f"SOLUTION2: {sum}")
+
+    return True
 
 
 # ------------------------------------------------ #
