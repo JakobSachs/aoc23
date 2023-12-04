@@ -46,8 +46,13 @@ def run_task(module, task_name) -> Union[bool, float]:
         print(f"Task {task_name} not present for: {module.__name__}")
         return False
 
-    t_res = getattr(module, task_name)()
-    if not t_res:
+    try:
+        t_res = getattr(module, task_name)()
+        if not t_res:
+            return False
+    except Exception as e:
+        print(f"Task {task_name} failed for: {module.__name__}")
+        print(e)
         return False
 
     for _ in range(3):
@@ -55,12 +60,7 @@ def run_task(module, task_name) -> Union[bool, float]:
         start_time = time.time()
 
         # Execute the task
-        try:
-            getattr(module, task_name)()
-        except Exception as e:
-            print(f"Task {task_name} failed for: {module.__name__}")
-            print(e)
-            return False
+        getattr(module, task_name)()
 
         # End timing
         end_time = time.time()
