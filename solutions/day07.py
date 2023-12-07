@@ -88,18 +88,19 @@ class Type(Enum):
     ONE_PAIR = 5
     HIGH_CARD = 4
 
+
 class Evaluation:
     type: Type
     suit: Card
     cards: list[Card]
-    
-    def __init__(self,hand: "Hand") -> None:
+
+    def __init__(self, hand: "Hand") -> None:
         self.cards = hand.cards
 
         if hand.counts[0][1] == 5:
             self.type = Type.FIVE_OF_A_KIND
             self.suit = hand.counts[0][0]
-            
+
         elif hand.counts[0][1] == 4:
             self.type = Type.FOUR_OF_A_KIND
             self.suit = hand.counts[0][0]
@@ -126,7 +127,7 @@ class Evaluation:
     def __eq__(self, __value: object) -> bool:
         if not isinstance(__value, Evaluation):
             return NotImplemented
-        
+
         if self.type != __value.type:
             return False
 
@@ -148,11 +149,10 @@ class Evaluation:
             if self.cards[i].value != __value.cards[i].value:
                 return self.cards[i].value < __value.cards[i].value
         return False
-    
+
     def __repr__(self) -> str:
         return f"{self.type.name} {self.suit.name} {self.cards}"
 
-        
 
 @dataclass
 class Hand:
@@ -186,26 +186,22 @@ class Hand:
                 best_card = Card.C_A
                 best_count = 5
                 self.counts = [(best_card, best_count)]
-            else: # if not all jokers, add jokers to count
+            else:  # if not all jokers, add jokers to count
                 idx = self.counts.index((best_card, best_count))
                 self.counts[idx] = (best_card, best_count + counts[Card.C_JOKER])
-            
+
             # remove jokers from counts
-            for i,c in enumerate(self.counts):
+            for i, c in enumerate(self.counts):
                 if c[0] == Card.C_JOKER:
                     self.counts.pop(i)
                     break
 
-
-    
-
-
             # sort again
             self.counts.sort(key=lambda x: (x[1], x[0].value), reverse=True)
 
-
     def evaluate(self) -> Evaluation:
         return Evaluation(self)
+
 
 def test_hand():
     h = Hand([Card.C_2, Card.C_2, Card.C_2, Card.C_2, Card.C_2])
@@ -223,44 +219,53 @@ def test_hand():
     h = Hand([Card.C_2, Card.C_2, Card.C_3, Card.C_3, Card.C_4])
     assert h.evaluate().type == Type.TWO_PAIRS
 
-    h =  Hand([Card.C_2, Card.C_2, Card.C_3, Card.C_4, Card.C_5])
+    h = Hand([Card.C_2, Card.C_2, Card.C_3, Card.C_4, Card.C_5])
     assert h.evaluate().type == Type.ONE_PAIR
 
     h = Hand([Card.C_2, Card.C_3, Card.C_4, Card.C_5, Card.C_6])
     assert h.evaluate().type == Type.HIGH_CARD
 
+
 def task1() -> bool:
     games_str = input.splitlines()
-    #games_str = test_input.splitlines()
+    # games_str = test_input.splitlines()
     games: list[tuple[Evaluation, int]] = [
-        (Hand([Card.from_str(c) for c in g.split(" ")[0]]).evaluate(), int(g.split(" ")[1]))
+        (
+            Hand([Card.from_str(c) for c in g.split(" ")[0]]).evaluate(),
+            int(g.split(" ")[1]),
+        )
         for g in games_str
     ]
     games.sort(key=lambda x: x[0])
 
-    winnings = 0 
+    winnings = 0
 
-    for r,(g,bid) in enumerate(games):
-        winnings += bid*(r+1)
-    
+    for r, (g, bid) in enumerate(games):
+        winnings += bid * (r + 1)
+
     logger.info(f"SOLUTION 1: {winnings}")
     return True
 
 
 def task2() -> bool:
     games_str = input.splitlines()
-    #games_str = test_input.splitlines()
+    # games_str = test_input.splitlines()
     games: list[tuple[Evaluation, int]] = [
-        (Hand([Card.from_str(c.replace("J","X")) for c in g.split(" ")[0]]).evaluate(), int(g.split(" ")[1]))
+        (
+            Hand(
+                [Card.from_str(c.replace("J", "X")) for c in g.split(" ")[0]]
+            ).evaluate(),
+            int(g.split(" ")[1]),
+        )
         for g in games_str
     ]
     games.sort(key=lambda x: x[0])
 
-    winnings = 0 
+    winnings = 0
 
-    for r,(_,bid) in enumerate(games):
-        winnings += bid*(r+1)
-    
+    for r, (_, bid) in enumerate(games):
+        winnings += bid * (r + 1)
+
     logger.info(f"SOLUTION 2: {winnings}")
     return True
 
