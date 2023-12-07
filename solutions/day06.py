@@ -27,7 +27,7 @@ def task1() -> bool:
         prod *= ways
     
     logger.info(f"SOLUTION 1: {prod}")
-    return False
+    return True
 
 
 def task2() -> bool:
@@ -66,7 +66,7 @@ def task2() -> bool:
             high = mid 
     
     logger.info(f"SOLUTION 2: {upper - lower + 1}")
-    return False
+    return True
 
 
 # ------------------------------------------------ #
