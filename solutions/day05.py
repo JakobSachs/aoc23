@@ -192,12 +192,11 @@ def task2() -> bool:
         for sr in seed_ranges:
             for mr in map:
                 new_seed_ranges.extend(sr.map(mr))
-                #print(f"mapped {sr} to {new_seed_ranges} with {mr}\n")
-
+                # print(f"mapped {sr} to {new_seed_ranges} with {mr}\n")
 
         new_seed_ranges.sort(key=lambda x: x.start)
         seed_ranges = new_seed_ranges
-        #print(seed_ranges)
+        # print(seed_ranges)
 
     logger.info(f"SOLUTION2: {min([s.start for s in seed_ranges ])}")
     return False

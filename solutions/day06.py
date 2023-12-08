@@ -1,17 +1,19 @@
 # ------------------------------------------------ #
-# Day 06 -- Wait For It 
+# Day 06 -- Wait For It
 # Author: Jakob Sachs
 # ------------------------------------------------ #
 
-Race = tuple[int,int] # time, distance
+Race = tuple[int, int]  # time, distance
 
-def simulate_race(race:Race, waiting:int) -> bool:
-    time,dist = race
+
+def simulate_race(race: Race, waiting: int) -> bool:
+    time, dist = race
     if time < waiting:
         raise ValueError("Race time is smaller than waiting time")
 
     # check if the waiting time is enough
     return waiting * (time - waiting) > dist
+
 
 def task1() -> bool:
     lines = input.splitlines()
@@ -19,13 +21,13 @@ def task1() -> bool:
     distances = [int(x) for x in lines[1].split(" ") if x.isdigit()]
 
     prod = 1
-    for (t,d) in zip(times,distances):
-        ways = 0 
+    for t, d in zip(times, distances):
+        ways = 0
         for i in range(t):
-            if simulate_race((t,d),i+1):
+            if simulate_race((t, d), i + 1):
                 ways += 1
         prod *= ways
-    
+
     logger.info(f"SOLUTION 1: {prod}")
     return True
 
@@ -41,7 +43,6 @@ def task2() -> bool:
     time = 56717999
     distance = 334113513502430
 
-    
     lower = 0
     # find lower bound using binary search
     low, high = 0, time
@@ -53,7 +54,6 @@ def task2() -> bool:
         else:
             low = mid + 1
 
-    
     upper = 0
     # find upper bound
     low, high = 0, time
@@ -61,10 +61,10 @@ def task2() -> bool:
         mid = (low + high) // 2
         if simulate_race((time, distance), mid):
             upper = mid
-            low = mid +1
+            low = mid + 1
         else:
-            high = mid 
-    
+            high = mid
+
     logger.info(f"SOLUTION 2: {upper - lower + 1}")
     return True
 
